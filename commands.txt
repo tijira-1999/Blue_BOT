@@ -1,0 +1,52 @@
+ALWAYS MAKE SURE TO KEEP YOUR DATA ON AND BLUETOOTH FOR VOICE RECOGNISER TO WORK
+
+
+DOWNLOAD THE MOBILE APP GIVEN IN MOBILE_APP FOLDER TO GIVE COMMANDS
+
+(bt voice control for arduino simple labsin) ------------------ SEARCH FOR THIS APP IN NET
+
+
+
+
+available commands
+
+forward
+short forward
+long forward
+
+back || backward
+short back || short backward
+long back || long backward
+
+right || write
+short right || short write || short ride
+long right || long write || long ride
+
+left
+short left || shirtless
+long left
+
+stop
+
+auto mode
+
+line follower
+
+fade
+
+turn around right
+
+turn around left
+
+blink
+
+lights on
+
+lights off
+
+despacito
+
+bus
+
+Boom
+
