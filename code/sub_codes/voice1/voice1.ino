@@ -4,28 +4,14 @@
 
 #define TRIG_PIN A1 // Pin A0 on the Motor Drive Shield soldered to the ultrasonic sensor
 #define ECHO_PIN A0 // Pin A1 on the Motor Drive Shield soldered to the ultrasonic sensor
-#define COLL_DIST 35 // sets distance at which robot stops and reverses to 30cm
+#define COLL_DIST 25 // sets distance at which robot stops and reverses to 30cm
 
 Servo myservo;  // create servo object to control a servo 
 
-const int r1=A6;
-const int r=A2;
-const int c4=A3;
-const int c3=A4;
-const int c2=A5;//12
-const int c1=2;
-const int l=12;//13
-const int l1=A7;//13
-
 bool p = true;
-bool v = true;
 int leftDistance, rightDistance; //distances on either side
 int curDist = 0;
 float duration,distance;
-
-bool rk = false, lk = false;
-bool kll = false, krr = false;
-  
 
 unsigned int i, j, k;
 const int x = 400, y = 1000, t1 = 7, t2 = 500;  // t1 = delay in milliseconds, t2 = delay in microseconds
@@ -65,12 +51,6 @@ const int IN4 = 10;    //Right Motor (-)
 
 void setup() 
 {
-  pinMode(c1,INPUT);
-  pinMode(c2,INPUT);
-  pinMode(c3,INPUT);
-  pinMode(c4,INPUT);
-  pinMode(l,INPUT);
-  pinMode(r,INPUT);
   
   myservo.attach(5);  // attaches the servo on pin 10 (SERVO_1 on the Motor Drive Shield to the servo object 
   myservo.write(74);
@@ -180,7 +160,6 @@ void loop()
                               
       else if (readvoice == "*stop#")
       { 
-        v = true;
         p = true;
         stop1();
       }
@@ -188,15 +167,7 @@ void loop()
       else if (readvoice == "*auto mode#")
       { 
         p = false;
-        v = true;
         //automode();
-      }
-
-      else if (readvoice == "*line follower#")
-      { 
-        v = false;
-        p = true;
-        //follows line
       }
                        
       else if (readvoice == "*turn around right#")
@@ -247,7 +218,6 @@ void loop()
     readvoice = "";
   }  //Reset the variable
   automode();
-  linemode();
 }
 
 void forward()
@@ -442,7 +412,7 @@ void stop1()
 
 void automode()
 {
-  if(p == false && v == true)
+  if(p == false)
   {
     curDist = readPing();   // read distance
     if (curDist < COLL_DIST) 
@@ -453,225 +423,6 @@ void automode()
     { 
       moveForward();  // move forward
     }            
-  }
-}
-
-int sd()
-{
-  int sdd = map(analogRead(r1),0,600,0,1);
-  return sdd;
-}
-
-int md()
-{
-  int mdd = map(analogRead(l1),0,600,0,1);
-  return mdd;
-}
-
-void linemode()
-{
-  
-  if(v == false && p == true)
-  {   
-    if(digitalRead(c2) == 0 && digitalRead(c3) == 0 && digitalRead(l) == 1 && digitalRead(r) == 1 && digitalRead(c1) == 1 && digitalRead(c4) == 1 && sd() == 1 && md() == 1)
-      forwardq();
-
-    else if(digitalRead(c2) == 0 && digitalRead(c3) == 1 && digitalRead(l) == 1 && digitalRead(r) == 1 && digitalRead(c1) == 1 && digitalRead(c4) == 1 && sd() == 1 && md() == 1)
-      forwardq();
-
-    else if(digitalRead(c2) == 1 && digitalRead(c3) == 0 && digitalRead(l) == 1 && digitalRead(r) == 1 && digitalRead(c1) == 1 && digitalRead(c4) == 1 && sd() == 1 && md() == 1)
-      forwardq();
-  
- 
-    else if(digitalRead(l) == 0 && digitalRead(c1) == 0 && digitalRead(c2) == 0 && digitalRead(c3) == 0 && digitalRead(c4) == 0 && digitalRead(r) == 1 && sd() == 1 && md() == 0)
-      {
-        leftq();
-        lk = true;
-      }
-    
-    else if(digitalRead(l) == 0 && digitalRead(c1) == 0 && digitalRead(c2) == 0 && digitalRead(c3) == 0 && digitalRead(c4) == 1 && digitalRead(r) == 1 && sd() == 1 && md() == 0)
-      {
-        leftq();
-        lk = true;
-      }
-
-    else if(digitalRead(l) == 0 && digitalRead(c1) == 0 && digitalRead(c2) == 0 && digitalRead(c3) == 1 && digitalRead(c4) == 1 && digitalRead(r) == 1 && sd() == 1 && md() == 0)
-      {
-        leftq();
-        lk = true;
-      }
-
-    else if(digitalRead(l) == 0 && digitalRead(c1) == 0 && digitalRead(c2) == 0 && digitalRead(c3) == 1 && digitalRead(c4) == 1 && digitalRead(r) == 1 && sd() == 1 && md() == 1)
-      leftq();
-
-    else if(digitalRead(l) == 0 && digitalRead(c1) == 0 && digitalRead(c2) == 1 && digitalRead(c3) == 1 && digitalRead(c4) == 1 && digitalRead(r) == 1 && sd() == 1 && md() == 1)
-      leftq();
-
-    else if(digitalRead(l) == 0 && digitalRead(c1) == 0 && digitalRead(c2) == 1 && digitalRead(c3) == 1 && digitalRead(c4) == 1 && digitalRead(r) == 1 && sd() == 1 && md() == 0)
-      {
-        leftq(); 
-        lk = true;
-      }
-
-    else if(digitalRead(l) == 0 && digitalRead(c1) == 1 && digitalRead(c2) == 1 && digitalRead(c3) == 1 && digitalRead(c4) == 1 && digitalRead(r) == 1 && sd() == 1 && md() == 1)
-      leftq();
-
-    else if(digitalRead(l) == 1 && digitalRead(c1) == 1 && digitalRead(c2) == 1 && digitalRead(c3) == 1 && digitalRead(c4) == 1 && digitalRead(r) == 1 && md() == 0 && sd() == 1)
-      {
-        leftq();
-        lk = true;
-      }
-
-    else if(digitalRead(l) == 0 && digitalRead(c1) == 1 && digitalRead(c2) == 1 && digitalRead(c3) == 1 && digitalRead(c4) == 1 && digitalRead(r) == 1 && md() == 0 && sd() == 1)
-      {
-        leftq();  
-        lk = true;
-      }
-  
- 
-    else if(digitalRead(r) == 0 && digitalRead(c4) == 0 && digitalRead(c2) == 0 && digitalRead(c3) == 0 && digitalRead(c1) == 0 && digitalRead(l) == 1 && sd() == 0 && md() == 1)
-      {
-        rightq();
-        rk = true;
-      }
-    
-    else if(digitalRead(r) == 0 && digitalRead(c4) == 0 && digitalRead(c2) == 0 && digitalRead(c3) == 0 && digitalRead(c1) == 1 && digitalRead(l) == 1 && sd() == 0 && md() == 1)
-      {
-        rightq();
-        rk = true;
-      }
-
-    else if(digitalRead(r) == 0 && digitalRead(c4) == 0 && digitalRead(c2) == 1 && digitalRead(c3) == 0 && digitalRead(c1) == 1 && digitalRead(l) == 1 && sd() == 0 && md() == 1)
-      {
-        rightq();
-        rk = true;
-      }
-
-    else if(digitalRead(r) == 0 && digitalRead(c4) == 0 && digitalRead(c2) == 1 && digitalRead(c3) == 0 && digitalRead(c1) == 1 && digitalRead(l) == 1 && sd() == 1 && md() == 1)
-      rightq(); 
-
-    else if(digitalRead(r) == 0 && digitalRead(c4) == 0 && digitalRead(c2) == 1 && digitalRead(c3) == 1 && digitalRead(c1) == 1 && digitalRead(l) == 1 && sd() == 1 && md() == 1)
-      rightq();
-
-    else if(digitalRead(r) == 0 && digitalRead(c4) == 0 && digitalRead(c2) == 1 && digitalRead(c3) == 1 && digitalRead(c1) == 1 && digitalRead(l) == 1 && sd() == 0 && md() == 1)
-      {
-        rightq(); 
-        rk = true;
-      }
-
-    else if(digitalRead(r) == 0 && digitalRead(c4) == 1 && digitalRead(c2) == 1 && digitalRead(c3) == 1 && digitalRead(c1) == 1 && digitalRead(l) == 1 && sd() == 1 && md() == 1)
-      rightq();
-
-    else if(digitalRead(r) == 1 && digitalRead(c4) == 1 && digitalRead(c2) == 1 && digitalRead(c3) == 1 && digitalRead(c1) == 1 && digitalRead(l) == 1 && sd() == 0 && md() == 1)
-      {
-        rightq();
-        rk = true;
-      }
-
-    else if(digitalRead(r) == 0 && digitalRead(c4) == 1 && digitalRead(c2) == 1 && digitalRead(c3) == 1 && digitalRead(c1) == 1 && digitalRead(l) == 1 && sd() == 0 && md() == 1)
-      {
-        rightq();
-        rk = true;
-      }
-  
- 
-    else if(digitalRead(c1) == 0 &&digitalRead(c2) == 0 && digitalRead(c4) == 1 && digitalRead(r) == 1 && digitalRead(c3) == 1 && digitalRead(l) == 1 && sd() == 1 && md() == 1)
-      sleftq();
-
-    else if(digitalRead(c1) == 0 &&digitalRead(c2) == 1 && digitalRead(c4) == 1 && digitalRead(r) == 1 && digitalRead(c3) == 1 && digitalRead(l) == 1 && sd() == 1 && md() == 1)
-      sleftq();
-  
- 
-    else if(digitalRead(c4) == 0 && digitalRead(c3) == 0 && digitalRead(c1) == 1 && digitalRead(r) == 1 && digitalRead(c2) == 1 && digitalRead(l) == 1 && sd() == 1 && md() == 1)
-      srightq();
-
-    else if(digitalRead(c4) == 0 && digitalRead(c3) == 1 && digitalRead(c1) == 1 && digitalRead(r) == 1 && digitalRead(c2) == 1 && digitalRead(l) == 1 && sd() == 1 && md() == 1)
-      srightq();  
-  
- 
-    else if(digitalRead(c1) == 0 && digitalRead(l) == 0 && digitalRead(c4) == 0 && digitalRead(r) == 0 && digitalRead(c2) == 1 && digitalRead(c3) == 1 && sd() == 1 && md() == 1)
-      forwardq();
-  
- 
-    else if(digitalRead(r) == 1 && digitalRead(l) == 1 && digitalRead(c1) == 1 && digitalRead(c2) == 1 && digitalRead(c3) == 1 && digitalRead(c4) == 1 && sd() == 1 && md() == 1)
-      {
-        //forwardq();
-        if (lk == true)
-        {
-          while (md()==0 || digitalRead(c1) == 0 || digitalRead(c2) == 0 || digitalRead(c4) == 0 || digitalRead(r) == 0 || digitalRead(c3) == 0 || digitalRead(l) == 0 || sd() == 0)
-          {
-            //left
-            analogWrite(enbA, 90);
-            analogWrite(enbB, 0);
-            digitalWrite(IN1, HIGH);
-            digitalWrite(IN2, LOW);
-            digitalWrite(IN3, LOW);
-            digitalWrite(IN4, HIGH);
-          }
-          kll = true;
-        }
-
-        else if (rk == true)
-        {
-          while (md()==0 || digitalRead(c1) == 0 || digitalRead(c2) == 0 || digitalRead(c4) == 0 || digitalRead(r) == 0 || digitalRead(c3) == 0 || digitalRead(l) == 0 || sd() == 0)
-          {
-              //right
-              analogWrite(enbA, 0);
-              analogWrite(enbB, 75);
-              digitalWrite(IN1, LOW);
-              digitalWrite(IN2, HIGH);
-              digitalWrite(IN3, HIGH);
-              digitalWrite(IN4, LOW);
-          }
-          krr = true;
-        }
-
-        lk = false;
-        rk = false;
-      }
-
-      else if(digitalRead(r) == 0 && digitalRead(l) == 0 && digitalRead(c1) == 0 && digitalRead(c2) == 0 && digitalRead(c3) == 0 && digitalRead(c4) == 0 && sd() == 0 && md() == 0)
-      {
-        if (kll == true)
-        {
-          //left
-          analogWrite(enbA, 90);
-          analogWrite(enbB, 0);
-          digitalWrite(IN1, HIGH);
-          digitalWrite(IN2, LOW);
-          digitalWrite(IN3, LOW);
-          digitalWrite(IN4, HIGH);
-          delay(80);
-        }
-        else if(krr == true)
-        {
-          //right
-          analogWrite(enbA, 0);
-          analogWrite(enbB, 75);
-          digitalWrite(IN1, LOW);
-          digitalWrite(IN2, HIGH);
-          digitalWrite(IN3, HIGH);
-          digitalWrite(IN4, LOW);
-          delay(80);
-        }
-        kll = false;
-        krr = false;
-      }
-    /*else if(digitalRead(l) == 0 && digitalRead(r) == 0 && digitalRead(c1) == 1 && digitalRead(c2) == 1 && digitalRead(c3) == 1 && digitalRead(c4) == 1)
-    {
-      while(digitalRead(c2) == 0 && digitalRead(c3) == 0 && digitalRead(l) == 1 && digitalRead(r) == 1 && digitalRead(c1) == 1 && digitalRead(c4) == 1)
-      {
-        backwardq();
-      }
-      turnaroundq();
-      while(digitalRead(c2) == 0 && digitalRead(c3) == 0 && digitalRead(l) == 1 && digitalRead(r) == 1 && digitalRead(c1) == 1 && digitalRead(c4) == 1)
-      {
-        turnaround();
-      }    
-    }*/
- 
-    else
-      sstopq();
   }
 }
 
@@ -1371,103 +1122,5 @@ void moveBackward1()
       digitalWrite(IN4, HIGH);
       
       delay(50);
-}
-
-void forwardq()
-{
-      //forward 
-      analogWrite(enbA, 100);
-      analogWrite(enbB, 85);
-      digitalWrite(IN1, HIGH);
-      digitalWrite(IN2, LOW);
-      digitalWrite(IN3, HIGH);
-      digitalWrite(IN4, LOW);
-}
-
-void leftq()
-{
-      //left
-      analogWrite(enbA, 125);
-      analogWrite(enbB, 110);
-      digitalWrite(IN1, HIGH);
-      digitalWrite(IN2, LOW);
-      digitalWrite(IN3, LOW);
-      digitalWrite(IN4, HIGH);
-}
-
-void rightq()
-{
-      //right
-      analogWrite(enbA, 125);
-      analogWrite(enbB, 110);
-      digitalWrite(IN1, LOW);
-      digitalWrite(IN2, HIGH);
-      digitalWrite(IN3, HIGH);
-      digitalWrite(IN4, LOW);
-  
-}
-
-void sleftq()
-{
-      //left
-      analogWrite(enbA, 100);
-      analogWrite(enbB, 0);
-      digitalWrite(IN1, HIGH);
-      digitalWrite(IN2, LOW);
-      digitalWrite(IN3, LOW);
-      digitalWrite(IN4, HIGH);
-}
-void srightq()
-{
-      //right
-      analogWrite(enbA, 0);
-      analogWrite(enbB, 100);
-      digitalWrite(IN1, LOW);
-      digitalWrite(IN2, HIGH);
-      digitalWrite(IN3, HIGH);
-      digitalWrite(IN4, LOW);
-  
-}
-void sstopq()
-{
-      //stop car
-      analogWrite(enbA, 0);
-      analogWrite(enbB, 0);
-}
-
-void backwardq()
-{
-      //backward          
-      analogWrite(enbA, 90);
-      analogWrite(enbB, 75);
-      digitalWrite(IN1, LOW);
-      digitalWrite(IN2, HIGH);
-      digitalWrite(IN3, LOW);
-      digitalWrite(IN4, HIGH);
-}
-
-void turnaroundq()
-{
-      //left
-      analogWrite(enbA, RightSpd);
-      analogWrite(enbB, LeftSpd);
-      digitalWrite(IN1, HIGH);
-      digitalWrite(IN2, LOW);
-      digitalWrite(IN3, LOW);
-      digitalWrite(IN4, HIGH);
-
-      delay(290);
-      analogWrite(enbA, 0);
-      analogWrite(enbB, 0);
-}
-
-void turnaround()
-{
-      analogWrite(enbA, 88);
-      analogWrite(enbB, 73);
-      digitalWrite(IN1, HIGH);
-      digitalWrite(IN2, LOW);
-      digitalWrite(IN3, LOW);
-      digitalWrite(IN4, HIGH);
 }
 
